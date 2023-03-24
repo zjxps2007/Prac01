@@ -5,6 +5,9 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.example.prac01.databinding.ActivityMainBinding
 
+
+var drawMode: Int = -1
+
 class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -15,11 +18,17 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         binding.button1.setOnClickListener {
+            drawMode = 0
             startActivity(Intent(this@MainActivity, DrawSurface::class.java))
         }
 
         binding.button2.setOnClickListener {
+            drawMode = 1
             startActivity(Intent(this@MainActivity, DrawTriangle::class.java))
+        }
+        binding.button3.setOnClickListener {
+            drawMode = 2
+            startActivity(Intent(this@MainActivity, DrawSquare::class.java))
         }
     }
 }
