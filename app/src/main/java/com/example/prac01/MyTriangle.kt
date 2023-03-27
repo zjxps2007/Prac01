@@ -18,6 +18,13 @@ class MyTriangle {
         0.5f, 0.5f, 0.0f
     )
 
+    private val triangleColors = floatArrayOf(
+        1.0f, 1.0f, 1.0f,
+        1.0f, 1.0f, 1.0f,
+        1.0f, 1.0f, 1.0f,
+
+    )
+
     private val color = floatArrayOf(1.0f, 1.0f, 0.0f, 1.0f)
 
     private var vertexBuffer: FloatBuffer =
