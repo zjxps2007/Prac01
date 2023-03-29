@@ -15,9 +15,13 @@ class MySquare {
         0.75f, -0.75f, 0.0f,
         0.75f, 0.75f, 0.0f,
     )
+
+    private val squareColors = floatArrayOf(
+        1.0f, 0.0f, 0.0f,
+        0.0f,
+    )
     
     private val color = floatArrayOf(0.0f, 0.0f, 0.5f, 1.0f)
-    
     private var drawOrder = shortArrayOf(0, 1, 2, 0, 2, 3)
 
     private var vertexBuffer: FloatBuffer =

@@ -14,18 +14,20 @@ class MyTriangle {
         -0.5f, -0.5f, 0.0f,
         0.5f, -0.5f, 0.0f,
         0.0f, 0.0f, 0.0f,
-        -0.5f, 0.5f, 0.0f,
-        0.5f, 0.5f, 0.0f
+        0.5f, 0.5f, 0.0f,
+        -0.5f, 0.5f, 0.0f
     )
 
     private val triangleColors = floatArrayOf(
         1.0f, 1.0f, 1.0f,
+        1.0f, 0.0f, 0.0f,
+        1.0f, 1.0f, 0.0f,
         1.0f, 1.0f, 1.0f,
-        1.0f, 1.0f, 1.0f,
-
+        0.0f, 1.0f, 1.0f,
+        0.0f, 0.0f, 1.0f,
     )
 
-    private val color = floatArrayOf(1.0f, 1.0f, 0.0f, 1.0f)
+//    private val color = floatArrayOf(1.0f, 1.0f, 0.0f, 1.0f)
 
     private var vertexBuffer: FloatBuffer =
         ByteBuffer.allocateDirect(triangleCoords.size * 4).run {
@@ -36,25 +38,40 @@ class MyTriangle {
                 position(0)
             }
         }
+
+    private var colorBuffer: FloatBuffer =
+        ByteBuffer.allocateDirect(triangleColors.size * 4).run {
+            order(ByteOrder.nativeOrder())
+
+            asFloatBuffer().apply {
+                put(triangleColors)
+                position(0)
+            }
+        }
+
     private val vertexShaderCode =
         "#version 300 es\n" +
                 "layout(location = 0) in vec4 vPosition;\n" +
+                "layout(location = 2) in vec4 vColor;\n" +
+                "out vec4 fColor;\n" +
                 "void main(){\n" +
                 "gl_PointSize = 5.0f;\n" +
                 "gl_Position = vPosition;\n" +
+                "fColor = vColor;\n" +
                 "}\n"
     private val fragmentShaderCode =
         "#version 300 es\n" +
                 "precision mediump float;\n" +
-                "uniform vec4 vColor;\n" +
+                //"uniform vec4 vColor;\n" +
+                "in vec4 fColor;\n" +
                 "out vec4 fragColor;\n" +
                 "void main(){\n" +
-                "fragColor = vColor;\n" +
+                "fragColor = fColor;\n" +
                 "}\n"
 
     private var mProgram: Int = -1
     //private var mPositionHandle: Int = -1
-    private var mColorHandle: Int = -1
+    //private var mColorHandle: Int = -1
 
     private val vertexCount: Int = triangleCoords.size / COORDS_PER_VERTEX
     private val vertexStride: Int = COORDS_PER_VERTEX * 4
@@ -86,9 +103,19 @@ class MyTriangle {
             )
         //}
 
-        mColorHandle = GLES30.glGetUniformLocation(mProgram, "vColor").also {
-            GLES30.glUniform4fv(it, 1, color, 0)
-        }
+//        mColorHandle = GLES30.glGetUniformLocation(mProgram, "vColor").also {
+//            GLES30.glUniform4fv(it, 1, color, 0)
+//        }
+
+        GLES30.glEnableVertexAttribArray(2)
+        GLES30.glVertexAttribPointer(
+            2,
+            COORDS_PER_VERTEX,
+            GLES30.GL_FLOAT,
+            false,
+            vertexStride,
+            colorBuffer
+        )
     }
 
     private fun loadShader(type: Int, shaderCode: String): Int {
