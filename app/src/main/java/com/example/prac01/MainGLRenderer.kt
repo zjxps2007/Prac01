@@ -12,12 +12,12 @@ class MainGLRenderer: GLSurfaceView.Renderer {
     private lateinit var mSquare: MySquare
     private lateinit var mCube: MyColorCube
 
-    private var progectionMatrix = FloatArray(16)
+    private var projectionMatrix = FloatArray(16)
 
     override fun onSurfaceCreated(gl: GL10?, config: EGLConfig?) {
         GLES30.glClearColor(0.0f, 0.0f, 0.0f, 1.0f)
 
-        Matrix.setIdentityM(progectionMatrix, 0)
+        Matrix.setIdentityM(projectionMatrix, 0)
 
         when (drawMode) {
             1 -> mTriangle = MyTriangle()
@@ -33,11 +33,11 @@ class MainGLRenderer: GLSurfaceView.Renderer {
             3 -> {
                 if (width > height) {
                     val ratio = width.toFloat() / height.toFloat()
-                    Matrix.orthoM(progectionMatrix, 0, -ratio, ratio, -1f, 1f, 0f, 1000f)
+                    Matrix.orthoM(projectionMatrix, 0, -ratio, ratio, -1f, 1f, 0f, 1000f)
                 }
                 else {
                     val ratio = height.toFloat() / width.toFloat()
-                    Matrix.orthoM(progectionMatrix, 0, -1f, 1f, -ratio, ratio, 0f, 1000f)
+                    Matrix.orthoM(projectionMatrix, 0, -1f, 1f, -ratio, ratio, 0f, 1000f)
                 }
             }
         }
@@ -49,7 +49,7 @@ class MainGLRenderer: GLSurfaceView.Renderer {
         when (drawMode) {
             1 -> mTriangle.draw()
             2 -> mSquare.draw()
-            3 -> mCube.draw(progectionMatrix)
+            3 -> mCube.draw(projectionMatrix)
         }
     }
 }

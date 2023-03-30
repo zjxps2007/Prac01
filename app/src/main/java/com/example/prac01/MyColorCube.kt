@@ -54,18 +54,18 @@ class MyColorCube {
 
     private val vertexShaderCode =
         "#version 300 es\n" +
-                "uniform mat4 uMVPMatrix\n" +
+                //"uniform mat4 uMVPMatrix\n" +
                 "layout(location = 3) in vec4 vPosition;\n" +
                 "layout(location = 4) in vec4 vColor;\n" +
                 "out vec4 fColor;\n" +
                 "void main(){\n" +
-                "gl_Position = uMVPMatrix * vPosition;\n" +
-                "fColor = vColor;\n"+
+                "gl_Position = vPosition;\n" +
+                "fColor = vColor;\n" +
                 "}\n"
     private val fragmentShaderCode =
         "#version 300 es\n" +
                 "precision mediump float;\n" +
-                "in vec4 fColor;\n"+
+                "in vec4 fColor;\n" +
                 "out vec4 fragColor;\n" +
                 "void main(){\n" +
                 "fragColor = fColor;\n" +
