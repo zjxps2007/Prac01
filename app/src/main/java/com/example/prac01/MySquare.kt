@@ -13,11 +13,17 @@ class MySquare {
         -0.75f, 0.75f, 0.0f,
         -0.75f, -0.75f, 0.0f,
         0.75f, -0.75f, 0.0f,
-        0.75f, 0.75f, 0.0f,
+        0.75f, 0.75f, 0.0f
+    )
+
+    private val squareColors = floatArrayOf(
+        1.0f, 0.0f, 0.0f,
+        1.0f, 1.0f, 0.0f,
+        0.0f, 1.0f, 0.0f,
+        0.0f, 0.0f, 1.0f
     )
     
-    private val color = floatArrayOf(0.0f, 0.0f, 0.5f, 1.0f)
-    
+//    private val color = floatArrayOf(0.0f, 0.0f, 0.5f, 1.0f)
     private var drawOrder = shortArrayOf(0, 1, 2, 0, 2, 3)
 
     private var vertexBuffer: FloatBuffer =
@@ -26,6 +32,16 @@ class MySquare {
 
             asFloatBuffer().apply {
                 put(squareCoords)
+                position(0)
+            }
+        }
+
+    private var colorBuffer: FloatBuffer =
+        ByteBuffer.allocateDirect(squareColors.size * 4).run {
+            order(ByteOrder.nativeOrder())
+
+            asFloatBuffer().apply {
+                put(squareColors)
                 position(0)
             }
         }
@@ -42,22 +58,26 @@ class MySquare {
     private val vertexShaderCode =
         "#version 300 es\n" +
                 "layout(location = 1) in vec4 vPosition;\n" +
+                "layout(location = 3) in vec4 vColor;\n" +
+                "out vec4 fColor;\n" +
                 "void main(){\n" +
                 "gl_Position = vPosition;\n" +
+                "fColor = vColor;\n" +
                 "}\n"
     private val fragmentShaderCode =
         "#version 300 es\n" +
                 "precision mediump float;\n" +
-                "uniform vec4 vColor;\n" +
+//                "uniform vec4 vColor;\n" +
+                "in vec4 fColor;\n" +
                 "out vec4 fragColor;\n" +
                 "void main(){\n" +
-                "fragColor = vColor;\n" +
+                "fragColor = fColor;\n" +
                 "}\n"
 
     private var mProgram: Int = -1
     
    // private var mPositionHandle: Int = -1
-    private var mColorHandle: Int = -1
+//    private var mColorHandle: Int = -1
     
     private val vertexStride: Int = COORDS_PER_VERTEX * 4
 
@@ -86,11 +106,22 @@ class MySquare {
                 vertexStride,
                 vertexBuffer
             )
+
+        GLES30.glEnableVertexAttribArray(3)
+        GLES30.glVertexAttribPointer(
+            3,
+            COORDS_PER_VERTEX,
+            GLES30.GL_FLOAT,
+            false,
+            vertexStride,
+            colorBuffer
+        )
+
         //}
 
-        mColorHandle = GLES30.glGetUniformLocation(mProgram, "vColor").also {
-            GLES30.glUniform4fv(it, 1, color, 0)
-        }
+//        mColorHandle = GLES30.glGetUniformLocation(mProgram, "vColor").also {
+//            GLES30.glUniform4fv(it, 1, color, 0)
+//        }
     }
 
     private fun loadShader(type: Int, shaderCode: String): Int {
