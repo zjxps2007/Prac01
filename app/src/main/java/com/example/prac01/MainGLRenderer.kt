@@ -19,6 +19,8 @@ class MainGLRenderer: GLSurfaceView.Renderer {
     override fun onSurfaceCreated(gl: GL10?, config: EGLConfig?) {
         GLES30.glClearColor(0.0f, 0.0f, 0.0f, 1.0f)
 
+        GLES30.glEnable(GLES30.GL_DEPTH_TEST)
+
         Matrix.setIdentityM(mvpMatrix, 0)
         Matrix.setIdentityM(viewMatrix, 0)
         Matrix.setIdentityM(projectionMatrix, 0)
@@ -44,7 +46,7 @@ class MainGLRenderer: GLSurfaceView.Renderer {
                     Matrix.orthoM(projectionMatrix, 0, -1f, 1f, -ratio, ratio, 0f, 1000f)
                 }
 
-                Matrix.setLookAtM(viewMatrix, 0, 1f, 0f, 1f, 0f, 0f, 0f,0f,1f, 1f)
+                Matrix.setLookAtM(viewMatrix, 0, 1f, 1f, 1f, 0f, 0f, 0f,0f,1f, 0f)
 
                 Matrix.multiplyMM(mvpMatrix, 0, projectionMatrix, 0, viewMatrix, 0)
             }
@@ -52,7 +54,7 @@ class MainGLRenderer: GLSurfaceView.Renderer {
     }
 
     override fun onDrawFrame(gl: GL10?) {
-        GLES30.glClear(GLES30.GL_COLOR_BUFFER_BIT)
+        GLES30.glClear(GLES30.GL_COLOR_BUFFER_BIT or GLES30.GL_DEPTH_BUFFER_BIT)
 
         when (drawMode) {
             1 -> mTriangle.draw()
