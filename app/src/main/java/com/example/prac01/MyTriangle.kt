@@ -17,11 +17,6 @@ class MyTriangle {
         0.5f, 0.5f, 0.0f,
         -0.5f, 0.5f, 0.0f
     )
-
-  
-
-
-
     private var vertexBuffer: FloatBuffer =
         ByteBuffer.allocateDirect(triangleCoords.size * 4).run {
             order(ByteOrder.nativeOrder())
