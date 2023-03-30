@@ -42,6 +42,7 @@ class MyTriangle {
                 "gl_PointSize = 5.0f;\n" +
                 "gl_Position = vPosition;\n" +
                 "}\n"
+
     private val fragmentShaderCode =
         "#version 300 es\n" +
                 "precision mediump float;\n" +
