@@ -13,7 +13,7 @@ class MySquare {
         -0.75f, 0.75f, 0.0f,
         -0.75f, -0.75f, 0.0f,
         0.75f, -0.75f, 0.0f,
-        0.75f, 0.75f, 0.0f,
+        0.75f, 0.75f, 0.0f
     )
 
     private val squareColors = floatArrayOf(
@@ -77,7 +77,7 @@ class MySquare {
     private var mProgram: Int = -1
     
    // private var mPositionHandle: Int = -1
-    private var mColorHandle: Int = -1
+//    private var mColorHandle: Int = -1
     
     private val vertexStride: Int = COORDS_PER_VERTEX * 4
 
