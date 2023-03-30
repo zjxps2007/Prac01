@@ -17,12 +17,14 @@ class MyTriangle {
         -0.5f, 0.5f, 0.0f,
         0.5f, 0.5f, 0.0f
     )
-//    private val triangleColors = floatArrayOf(
-//        1.0f, 1.0f, 1.0f,
-//        1.0f, 1.0f, 1.0f,
-//        1.0f, 1.0f, 1.0f,
-//
-//    )
+    private val triangleColors = floatArrayOf(
+        1.0f, 1.0f, 1.0f,
+        1.0f, 1.0f, 1.0f,
+        1.0f, 1.0f, 1.0f,
+        1.0f, 1.0f, 1.0f,
+        0.0f, 1.0f, 1.0f,
+        0.0f, 0.0f, 1.0f
+        )
 
     private val color = floatArrayOf(1.0f, 1.0f, 0.0f, 1.0f)
 
@@ -74,16 +76,16 @@ class MyTriangle {
         GLES30.glUseProgram(mProgram)
 
         //mPositionHandle = GLES30.glGetAttribLocation(mProgram, "vPosition").also {
-        GLES30.glEnableVertexAttribArray(0)
+            GLES30.glEnableVertexAttribArray(0)
 
-        GLES30.glVertexAttribPointer(
-            0,
-            COORDS_PER_VERTEX,
-            GLES30.GL_FLOAT,
-            false,
-            vertexStride,
-            vertexBuffer
-        )
+            GLES30.glVertexAttribPointer(
+                0,
+                COORDS_PER_VERTEX,
+                GLES30.GL_FLOAT,
+                false,
+                vertexStride,
+                vertexBuffer
+            )
         //}
 
         mColorHandle = GLES30.glGetUniformLocation(mProgram, "vColor").also {

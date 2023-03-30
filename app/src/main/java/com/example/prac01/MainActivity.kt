@@ -30,5 +30,9 @@ class MainActivity : AppCompatActivity() {
             drawMode = 2
             startActivity(Intent(this@MainActivity, DrawSquare::class.java))
         }
+        binding.button4.setOnClickListener {
+            drawMode = 3
+            startActivity(Intent(this@MainActivity, DrawColorCube::class.java))
+        }
     }
 }
