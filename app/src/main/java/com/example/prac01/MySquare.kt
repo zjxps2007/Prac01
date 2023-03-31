@@ -58,7 +58,7 @@ class MySquare {
     private val vertexShaderCode =
         "#version 300 es\n" +
                 "layout(location = 1) in vec4 vPosition;\n" +
-                "layout(location = 3) in vec4 vColor;\n" +
+                "layout(location = 2) in vec4 vColor;\n" +
                 "out vec4 fColor;\n" +
                 "void main(){\n" +
                 "gl_Position = vPosition;\n" +
@@ -107,9 +107,9 @@ class MySquare {
                 vertexBuffer
             )
 
-        GLES30.glEnableVertexAttribArray(3)
+        GLES30.glEnableVertexAttribArray(2)
         GLES30.glVertexAttribPointer(
-            3,
+            2,
             COORDS_PER_VERTEX,
             GLES30.GL_FLOAT,
             false,
