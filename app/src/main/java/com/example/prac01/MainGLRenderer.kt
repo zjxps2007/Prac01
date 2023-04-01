@@ -11,6 +11,7 @@ class MainGLRenderer: GLSurfaceView.Renderer {
     private lateinit var mTriangle: MyTriangle
     private lateinit var mSquare: MySquare
     private lateinit var mCube: MyColorCube
+    private lateinit var mHexagonal: MyHexapyramid
 
     private var mvpMatrix = FloatArray(16)
     private var viewMatrix = FloatArray(16)
@@ -29,6 +30,7 @@ class MainGLRenderer: GLSurfaceView.Renderer {
             1 -> mTriangle = MyTriangle()
             2 -> mSquare = MySquare()
             3 -> mCube = MyColorCube()
+            4 -> mHexagonal = MyHexapyramid()
         }
     }
 
@@ -37,17 +39,25 @@ class MainGLRenderer: GLSurfaceView.Renderer {
 
         when (drawMode) {
             3 -> {
-                if (width > height) {
-                    val ratio = width.toFloat() / height.toFloat()
-                    Matrix.orthoM(projectionMatrix, 0, -ratio, ratio, -1f, 1f, 0f, 1000f)
-                }
-                else {
-                    val ratio = height.toFloat() / width.toFloat()
-                    Matrix.orthoM(projectionMatrix, 0, -1f, 1f, -ratio, ratio, 0f, 1000f)
-                }
+//                if (width > height) {
+//                    val ratio = width.toFloat() / height.toFloat()
+//                    Matrix.orthoM(projectionMatrix, 0, -ratio, ratio, -1f, 1f, 0f, 1000f)
+//                }
+//                else {
+//                    val ratio = height.toFloat() / width.toFloat()
+//                    Matrix.orthoM(projectionMatrix, 0, -1f, 1f, -ratio, ratio, 0f, 1000f)
+//                }
 
-                Matrix.setLookAtM(viewMatrix, 0, 1f, 1f, 1f, 0f, 0f, 0f,0f,1f, 0f)
+                val ratio: Float = width.toFloat() / height.toFloat()
+                Matrix.perspectiveM(projectionMatrix, 0, 90f, ratio, 0.0001f, 1000f)
+                Matrix.setLookAtM(viewMatrix, 0, 1f, 1f, 1f, 0f, 0f, 0f,0f,1.0f, 0f)
+                Matrix.multiplyMM(mvpMatrix, 0, projectionMatrix, 0, viewMatrix, 0)
+            }
 
+            4 -> {
+                val ratio: Float = width.toFloat() / height.toFloat()
+                Matrix.perspectiveM(projectionMatrix, 0, 90f, ratio, 0.0001f, 1000f)
+                Matrix.setLookAtM(viewMatrix, 0, 0f, 2f, 2.5f, 0f, 0f, 0f,0f,1.0f, 0f)
                 Matrix.multiplyMM(mvpMatrix, 0, projectionMatrix, 0, viewMatrix, 0)
             }
         }
@@ -60,6 +70,7 @@ class MainGLRenderer: GLSurfaceView.Renderer {
             1 -> mTriangle.draw()
             2 -> mSquare.draw()
             3 -> mCube.draw(mvpMatrix)
+            4 -> mHexagonal.draw(mvpMatrix)
         }
     }
 }

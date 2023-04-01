@@ -7,37 +7,42 @@ import java.nio.ByteOrder
 import java.nio.FloatBuffer
 import java.nio.ShortBuffer
 
-class MyColorCube {
+class MyHexapyramid {
     private val vertexCoords = floatArrayOf(
-        -0.5f, 0.5f, -0.5f,
-        -0.5f, -0.5f, -0.5f,
-        0.5f, -0.5f, -0.5f,
-        0.5f, 0.5f, -0.5f,
-        -0.5f, 0.5f, 0.5f,
-        -0.5f, -0.5f, 0.5f,
-        0.5f, -0.5f, 0.5f,
-        0.5f, 0.5f, 0.5f
-
+        0f, 1f, 0f,          // 0
+        1f, 1f, 0f,          // 1
+        0.5f, 1f, -0.8660f,  // 2
+        -0.5f, 1f, -0.8660f, // 3
+        -1f, 1f, 0f,         // 4
+        -0.5f, 1f, 0.8660f,  // 5
+        0.5f, 1f, 0.8660f,   // 6
+        0f, -1f, 0f          // 7
     )
 
     private val vertexColors = floatArrayOf(
-        0.0f, 1.0f, 0.0f,
-        0.0f, 0.0f, 0.0f,
+        1.0f, 1.0f, 1.0f,
         1.0f, 0.0f, 0.0f,
         1.0f, 1.0f, 0.0f,
         0.0f, 1.0f, 0.0f,
+        0.0f, 1.0f, 1.0f,
         0.0f, 0.0f, 1.0f,
         1.0f, 0.0f, 1.0f,
-        1.0f, 1.0f, 1.0f
+        0.0f, 0.0f, 0.0f
     )
 
     private val drawOrder = shortArrayOf(
-        0, 3, 2, 0, 2, 1,
-        2, 3, 7, 2, 7, 6,
-        1, 2, 6, 1, 6, 5,
-        4, 0, 1, 4, 1, 5,
-        3, 0, 4, 3, 4, 7,
-        5, 6, 7, 5, 7, 4
+        0, 1, 2,
+        0, 2, 3,
+        0, 3, 4,
+        0, 4, 5,
+        0, 5, 6,
+        0, 6, 1,
+        6, 7, 1,
+        1, 7, 2,
+        2, 7, 3,
+        3, 7, 4,
+        4, 7, 5,
+        5, 7, 6
 
     )
 
@@ -72,8 +77,8 @@ class MyColorCube {
     private val vertexShaderCode =
         "#version 300 es\n" +
                 "uniform mat4 uMVPMatrix;\n" +
-                "layout(location = 3) in vec4 vPosition;\n" +
-                "layout(location = 4) in vec4 vColor;\n" +
+                "layout(location = 5) in vec4 vPosition;\n" +
+                "layout(location = 6) in vec4 vColor;\n" +
                 "out vec4 fColor;\n" +
                 "void main(){\n" +
                 "gl_Position = uMVPMatrix * vPosition;\n" +
@@ -109,9 +114,9 @@ class MyColorCube {
 
         GLES30.glUseProgram(mProgram)
 
-        GLES30.glEnableVertexAttribArray(3)
+        GLES30.glEnableVertexAttribArray(5)
         GLES30.glVertexAttribPointer(
-            3,
+            5,
             COORDS_PER_VERTEX,
             GLES30.GL_FLOAT,
             false,
@@ -119,9 +124,9 @@ class MyColorCube {
             vertexBuffer
         )
 
-        GLES30.glEnableVertexAttribArray(4)
+        GLES30.glEnableVertexAttribArray(6)
         GLES30.glVertexAttribPointer(
-            4,
+            6,
             COORDS_PER_VERTEX,
             GLES30.GL_FLOAT,
             false,

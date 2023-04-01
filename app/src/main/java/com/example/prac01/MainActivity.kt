@@ -21,7 +21,6 @@ class MainActivity : AppCompatActivity() {
             drawMode = 0
             startActivity(Intent(this@MainActivity, DrawSurface::class.java))
         }
-
         binding.button2.setOnClickListener {
             drawMode = 1
             startActivity(Intent(this@MainActivity, DrawTriangle::class.java))
@@ -33,6 +32,10 @@ class MainActivity : AppCompatActivity() {
         binding.button4.setOnClickListener {
             drawMode = 3
             startActivity(Intent(this@MainActivity, DrawColorCube::class.java))
+        }
+        binding.button5.setOnClickListener {
+            drawMode = 4
+            startActivity(Intent(this@MainActivity, DrawHexapyramid::class.java))
         }
     }
 }

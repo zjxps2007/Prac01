@@ -3,7 +3,7 @@ package com.example.prac01
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 
-class DrawColorCube : AppCompatActivity() {
+class DrawHexapyramid : AppCompatActivity() {
     private lateinit var mainSurfaceView: MainGLSurfaceView
 
     override fun onCreate(savedInstanceState: Bundle?) {
