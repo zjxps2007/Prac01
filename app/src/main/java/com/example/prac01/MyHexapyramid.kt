@@ -20,7 +20,7 @@ class MyHexapyramid {
     )
 
     private val vertexColors = floatArrayOf(
-        1.0f, 1.0f, 1.0f,
+        1.0f, 1.0f, 1.0f, // 흰색
         1.0f, 0.0f, 0.0f,
         1.0f, 1.0f, 0.0f,
         0.0f, 1.0f, 0.0f,
