@@ -37,5 +37,9 @@ class MainActivity : AppCompatActivity() {
             drawMode = 4
             startActivity(Intent(this@MainActivity, DrawHexapyramid::class.java))
         }
+        binding.button6.setOnClickListener {
+            drawMode = 5
+            startActivity(Intent(this@MainActivity, RotateCube::class.java))
+        }
     }
 }
