@@ -89,33 +89,56 @@ class MainGLRenderer: GLSurfaceView.Renderer {
             3 -> mCube.draw(vpMatrix)
             4 -> mHexagonal.draw(vpMatrix)
             5 -> {
-                val angle = 0.001f * (SystemClock.uptimeMillis() - startTime.toFloat())
-                val sinAngle = sin(angle)
-                val cosAngle = cos(angle)
-                if (rotateAxis == 0) {
-                    modelMatrix = floatArrayOf(
-                        1f, 0f, 0f, 0f,
-                        0f, cosAngle, -sinAngle, 0f,
-                        0f, sinAngle, cosAngle, 0f,
-                        0f, 0f, 0f, 1f,
-                    )
-                }
-                else if (rotateAxis == 1) {
-                    modelMatrix = floatArrayOf(
-                        cosAngle, 0f, sinAngle, 0f,
-                        0f, 1f, 0f, 0f,
-                        -sinAngle, 0f, cosAngle, 0f,
-                        0f, 0f, 0f, 1f
-                    )
-                }
-                else if (rotateAxis == 2) {
-                    modelMatrix = floatArrayOf(
-                        cosAngle, -sinAngle, 0f, 0f,
-                        sinAngle, cosAngle, 0f, 0f,
-                        0f, 0f, 1f, 0f,
-                        0f, 0f, 0f, 1f
-                    )
-                }
+//                val angle = 0.001f * (SystemClock.uptimeMillis() - startTime.toFloat())
+                val endTime = SystemClock.uptimeMillis()
+                val angle = 0.001f * (endTime - startTime).toFloat()
+                startTime = endTime
+                rotAngles[rotateAxis] += angle
+                var sinAngle = sin(rotAngles[0])
+                var cosAngle = cos(rotAngles[0])
+                val rotXMatrix = floatArrayOf(
+                    1f, 0f, 0f, 0f,
+                    0f, cosAngle, sinAngle, 0f,
+                    0f, -sinAngle, cosAngle, 0f,
+                    0f, 0f, 0f, 1f,
+                )
+
+                sinAngle = sin(rotAngles[1])
+                cosAngle = cos(rotAngles[1])
+                val rotYMatrix = floatArrayOf(
+                    cosAngle, 0f, -sinAngle, 0f,
+                    0f, 1f, 0f, 0f,
+                    sinAngle, 0f, cosAngle, 0f,
+                    0f, 0f, 0f, 1f
+                )
+
+                sinAngle = sin(rotAngles[2])
+                cosAngle = cos(rotAngles[2])
+                val rotZMatrix = floatArrayOf(
+                    cosAngle, sinAngle, 0f, 0f,
+                    -sinAngle, cosAngle, 0f, 0f,
+                    0f, 0f, 1f, 0f,
+                    0f, 0f, 0f, 1f
+                )
+
+                Matrix.multiplyMM(modelMatrix, 0, rotYMatrix, 0, rotXMatrix, 0)
+                Matrix.multiplyMM(modelMatrix, 0, rotZMatrix, 0, modelMatrix, 0)
+
+                val scaleMatrix = floatArrayOf(
+                    scaleFactor, 0f, 0f, 0f,
+                    0f, scaleFactor, 0f, 0f,
+                    0f, 0f, scaleFactor, 0f,
+                    0f, 0f, 0f, 1f
+                )
+                Matrix.multiplyMM(modelMatrix, 0, modelMatrix, 0, scaleMatrix, 0)
+
+                val translateMatrix = floatArrayOf(
+                    1f, 0f, 0f, 0f,
+                    0f, 1f, 0f, 0f,
+                    0f, 0f, 1f, 0f,
+                    displace[0], displace[1], displace[2], 1f
+                )
+                Matrix.multiplyMM(modelMatrix, 0, translateMatrix, 0, modelMatrix, 0)
 
                 Matrix.multiplyMM(mvpMatrix, 0, vpMatrix, 0, modelMatrix, 0)
 

@@ -6,6 +6,8 @@ import android.os.Bundle
 import com.example.prac01.databinding.ActivityRotateCubeBinding
 
 var rotateAxis = 0
+var scaleFactor = 1f
+var displace = floatArrayOf(0f, 0f, 0f)
 
 class RotateCube : AppCompatActivity() {
     val binding: ActivityRotateCubeBinding by lazy {
@@ -22,12 +24,44 @@ class RotateCube : AppCompatActivity() {
             rotateAxis = 0
         }
 
-        binding.rotateX.setOnClickListener {
+        binding.rotateY.setOnClickListener {
             rotateAxis = 1
         }
 
-        binding.rotateX.setOnClickListener {
+        binding.rotateZ.setOnClickListener {
             rotateAxis = 2
+        }
+
+        binding.ScaleUp.setOnClickListener {
+            scaleFactor *= 1.1f
+        }
+
+        binding.ScaleDown.setOnClickListener {
+            scaleFactor *= 0.9f
+        }
+
+        binding.poX.setOnClickListener {
+            displace[0] += 0.1f
+        }
+
+        binding.negX.setOnClickListener {
+            displace[0] -= 0.1f
+        }
+
+        binding.poY.setOnClickListener {
+            displace[1] += 0.1f
+        }
+
+        binding.negY.setOnClickListener {
+            displace[1] -= 0.1f
+        }
+
+        binding.poZ.setOnClickListener {
+            displace[2] += 0.1f
+        }
+
+        binding.negZ.setOnClickListener {
+            displace[2] -= 0.1f
         }
     }
 
