@@ -44,7 +44,7 @@ class MainGLRenderer: GLSurfaceView.Renderer {
             1 -> mTriangle = MyTriangle()
             2 -> mSquare = MySquare()
             3, 5 -> mCube = MyColorCube()
-            4 -> mHexagonal = MyHexapyramid()
+            4, 6 -> mHexagonal = MyHexapyramid()
         }
     }
 
@@ -52,7 +52,12 @@ class MainGLRenderer: GLSurfaceView.Renderer {
         GLES30.glViewport(0, 0, width, height)
 
         when (drawMode) {
-            3, 5 -> {
+            3, 4 -> {
+                val ratio = width.toFloat() / height.toFloat();
+                Matrix.perspectiveM(projectionMatrix, 0, 90f, ratio, 0.001f, 1000f)
+            }
+            /*
+            3 -> {
 //                if (width > height) {
 //                    val ratio = width.toFloat() / height.toFloat()
 //                    Matrix.orthoM(projectionMatrix, 0, -ratio, ratio, -1f, 1f, 0f, 1000f)
@@ -77,18 +82,45 @@ class MainGLRenderer: GLSurfaceView.Renderer {
                 Matrix.setLookAtM(viewMatrix, 0, 0f, 2f, 2.5f, 0f, 0f, 0f,0f,1.0f, 0f)
                 Matrix.multiplyMM(mvpMatrix, 0, projectionMatrix, 0, viewMatrix, 0)
             }
+
+             */
+
+            5, 6 -> {
+                if (width > height) {
+                    val ratio = width.toFloat() / height.toFloat()
+                    Matrix.orthoM(projectionMatrix, 0, -ratio, ratio, -1f, 1f, 0f, 1000f)
+                }
+                else {
+                    val ratio = height.toFloat() / width.toFloat()
+                    Matrix.orthoM(projectionMatrix, 0, -1f, 1f, -ratio, ratio, 0f, 1000f)
+                }
+            }
         }
+
+        when (drawMode) {
+            3, 5 -> {
+                Matrix.setLookAtM(viewMatrix, 0, 1f, 1f, 1f, 0f, 0f, 0f, 0f, 1f, 0f)
+            }
+            4 -> {
+                Matrix.setLookAtM(viewMatrix, 0, 2f, 2f, 2f, 0f, 0f, 0f, 0f, 1f, 0f)
+            }
+
+            6 -> {
+                Matrix.setLookAtM(viewMatrix, 0, 0f, 0f, 2f, 0f, 0f, 0f, 0f, 1f, 0f)
+            }
+        }
+
+        Matrix.multiplyMM(vpMatrix, 0, projectionMatrix, 0, viewMatrix, 0)
     }
+
+
 
     override fun onDrawFrame(gl: GL10?) {
         GLES30.glClear(GLES30.GL_COLOR_BUFFER_BIT or GLES30.GL_DEPTH_BUFFER_BIT)
 
         when (drawMode) {
-            1 -> mTriangle.draw()
-            2 -> mSquare.draw()
-            3 -> mCube.draw(vpMatrix)
-            4 -> mHexagonal.draw(vpMatrix)
             5 -> {
+                Matrix.setIdentityM(modelMatrix, 0)
 //                val angle = 0.001f * (SystemClock.uptimeMillis() - startTime.toFloat())
                 val endTime = SystemClock.uptimeMillis()
                 val angle = 0.001f * (endTime - startTime).toFloat()
@@ -139,11 +171,33 @@ class MainGLRenderer: GLSurfaceView.Renderer {
                     displace[0], displace[1], displace[2], 1f
                 )
                 Matrix.multiplyMM(modelMatrix, 0, translateMatrix, 0, modelMatrix, 0)
-
-                Matrix.multiplyMM(mvpMatrix, 0, vpMatrix, 0, modelMatrix, 0)
-
-                mCube.draw(mvpMatrix)
             }
+            6 -> {
+                Matrix.setIdentityM(modelMatrix, 0)
+
+                val endTime = SystemClock.uptimeMillis()
+                val angle = 0.01f * (endTime - startTime). toInt()
+                startTime = endTime
+                rotAngles[rotateAxis] += angle
+
+                Matrix.setRotateM(modelMatrix, 0, rotAngles[0], 1f, 0f, 0f)
+                val tempMatrix = floatArrayOf(1f, 0f, 0f, 0f, 0f, 1f, 0f, 0f, 0f, 0f, 1f, 0f, 0f, 0f, 0f, 1f)
+                Matrix.setRotateM(modelMatrix, 0, rotAngles[1], 0f, 1f, 0f)
+                Matrix.multiplyMM(modelMatrix, 0, tempMatrix, 0, modelMatrix, 0)
+                Matrix.setRotateM(modelMatrix, 0, rotAngles[2], 0f, 0f, 1f)
+                Matrix.multiplyMM(modelMatrix, 0, tempMatrix, 0, modelMatrix, 0)
+            }
+        }
+
+        Matrix.multiplyMM(mvpMatrix, 0, vpMatrix, 0, modelMatrix, 0)
+
+        when (drawMode) {
+            1 -> mTriangle.draw()
+            2 -> mSquare.draw()
+            3 -> mCube.draw(vpMatrix)
+            4 -> mHexagonal.draw(vpMatrix)
+            5 -> mCube.draw(mvpMatrix)
+            6 -> mHexagonal.draw(mvpMatrix)
         }
     }
 }
