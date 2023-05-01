@@ -51,5 +51,10 @@ class MainActivity : AppCompatActivity() {
             drawMode = 6
             startActivity(Intent(this@MainActivity, DrawObjects::class.java))
         }
+
+        binding.button8.setOnClickListener {
+            drawMode = 7
+            startActivity(Intent(this@MainActivity, ViewObjects::class.java))
+        }
     }
 }

@@ -29,6 +29,7 @@ class MainGLRenderer: GLSurfaceView.Renderer {
 
     private var startTime = SystemClock.uptimeMillis()
     private var rotAngles = floatArrayOf(0f, 0f, 0f)
+    private var aspectRatio = 1.0f
 
     override fun onSurfaceCreated(gl: GL10?, config: EGLConfig?) {
         GLES30.glClearColor(0.0f, 0.0f, 0.0f, 1.0f)
@@ -43,7 +44,7 @@ class MainGLRenderer: GLSurfaceView.Renderer {
         when (drawMode) {
             1 -> mTriangle = MyTriangle()
             2 -> mSquare = MySquare()
-            3, 5 -> mCube = MyColorCube()
+            3, 5, 7 -> mCube = MyColorCube()
             4, 6 -> mHexagonal = MyHexapyramid()
         }
     }
@@ -51,8 +52,10 @@ class MainGLRenderer: GLSurfaceView.Renderer {
     override fun onSurfaceChanged(gl: GL10?, width: Int, height: Int) {
         GLES30.glViewport(0, 0, width, height)
 
+        aspectRatio = width.toFloat() / height.toFloat()
+
         when (drawMode) {
-            3, 4 -> {
+            3, 4, 7 -> {
                 val ratio = width.toFloat() / height.toFloat();
                 Matrix.perspectiveM(projectionMatrix, 0, 90f, ratio, 0.001f, 1000f)
             }
@@ -98,7 +101,7 @@ class MainGLRenderer: GLSurfaceView.Renderer {
         }
 
         when (drawMode) {
-            3, 5 -> {
+            3, 5, 7 -> {
                 Matrix.setLookAtM(viewMatrix, 0, 1f, 1f, 1f, 0f, 0f, 0f, 0f, 1f, 0f)
             }
             4 -> {
@@ -198,6 +201,25 @@ class MainGLRenderer: GLSurfaceView.Renderer {
             4 -> mHexagonal.draw(vpMatrix)
             5 -> mCube.draw(mvpMatrix)
             6 -> mHexagonal.draw(mvpMatrix)
+
+            7 -> {
+                if (viewMode == 0) {
+                    Matrix.perspectiveM(projectionMatrix, 0, 90f, aspectRatio, 0.001f, 1000f)
+                }
+                else {
+                    if (aspectRatio >= 1.0f) {
+                        Matrix.orthoM(projectionMatrix, 0, -aspectRatio, aspectRatio, -1f, 1f, 0f, 1000f)
+                    }
+                    else {
+                        val ratio = 1.0f / aspectRatio
+                        Matrix.orthoM(projectionMatrix, 0, -1f, 1f, -ratio, ratio, 0f, 1000f)
+                    }
+                }
+
+                Matrix.multiplyMM(vpMatrix, 0, projectionMatrix, 0, viewMatrix, 0)
+
+                mCube.draw(vpMatrix)
+            }
         }
     }
 }

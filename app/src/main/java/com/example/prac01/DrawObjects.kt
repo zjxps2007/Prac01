@@ -10,7 +10,7 @@ class DrawObjects : AppCompatActivity() {
         ActivityDrawObjectsBinding.inflate(layoutInflater)
     }
 
-    var isRotating = false
+    private var isRotating = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,13 +32,12 @@ class DrawObjects : AppCompatActivity() {
 
         binding.toggleBtn.setOnClickListener {
             if (isRotating) {
-                binding.toggleBtn.text = "Start"
-            }
-            else {
                 binding.toggleBtn.text = "Stop"
             }
+            else {
+                binding.toggleBtn.text = "Start"
+            }
         }
-
     }
 
     fun initGLSurfaceView() {
