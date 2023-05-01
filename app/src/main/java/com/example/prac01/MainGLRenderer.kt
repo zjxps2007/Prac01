@@ -15,6 +15,7 @@ class MainGLRenderer: GLSurfaceView.Renderer {
     private lateinit var mSquare: MySquare
     private lateinit var mCube: MyColorCube
     private lateinit var mHexagonal: MyHexapyramid
+    private lateinit var myGround: MyGround
 
     private var mvpMatrix = FloatArray(16)
     private var viewMatrix = FloatArray(16)
@@ -36,6 +37,9 @@ class MainGLRenderer: GLSurfaceView.Renderer {
 
         GLES30.glEnable(GLES30.GL_DEPTH_TEST)
 
+        GLES30.glEnable(GLES30.GL_POLYGON_OFFSET_FILL)
+        GLES30.glPolygonOffset(1.0f, 1.0f)
+
         Matrix.setIdentityM(mvpMatrix, 0)
         Matrix.setIdentityM(viewMatrix, 0)
         Matrix.setIdentityM(projectionMatrix, 0)
@@ -44,8 +48,12 @@ class MainGLRenderer: GLSurfaceView.Renderer {
         when (drawMode) {
             1 -> mTriangle = MyTriangle()
             2 -> mSquare = MySquare()
-            3, 5, 7 -> mCube = MyColorCube()
+            3, 5 -> mCube = MyColorCube()
             4, 6 -> mHexagonal = MyHexapyramid()
+            7 -> {
+                mCube = MyColorCube()
+                myGround = MyGround()
+            }
         }
     }
 
@@ -101,10 +109,10 @@ class MainGLRenderer: GLSurfaceView.Renderer {
         }
 
         when (drawMode) {
-            3, 5, 7 -> {
+            3, 5 -> {
                 Matrix.setLookAtM(viewMatrix, 0, 1f, 1f, 1f, 0f, 0f, 0f, 0f, 1f, 0f)
             }
-            4 -> {
+            4, 7 -> {
                 Matrix.setLookAtM(viewMatrix, 0, 2f, 2f, 2f, 0f, 0f, 0f, 0f, 1f, 0f)
             }
 
@@ -219,6 +227,7 @@ class MainGLRenderer: GLSurfaceView.Renderer {
                 Matrix.multiplyMM(vpMatrix, 0, projectionMatrix, 0, viewMatrix, 0)
 
                 mCube.draw(vpMatrix)
+                myGround.draw(vpMatrix)
             }
         }
     }
