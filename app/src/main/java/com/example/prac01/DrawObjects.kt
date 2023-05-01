@@ -6,7 +6,7 @@ import android.os.Bundle
 import com.example.prac01.databinding.ActivityDrawObjectsBinding
 
 class DrawObjects : AppCompatActivity() {
-    val binding: ActivityDrawObjectsBinding by lazy {
+    private val binding: ActivityDrawObjectsBinding by lazy {
         ActivityDrawObjectsBinding.inflate(layoutInflater)
     }
 

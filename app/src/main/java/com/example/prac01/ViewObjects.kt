@@ -25,7 +25,7 @@ class ViewObjects : AppCompatActivity() {
             binding.surfaceView.requestRender()
         }
 
-        binding.persp?.setOnClickListener {
+        binding.persp.setOnClickListener {
             viewMode = 0
             binding.surfaceView.requestRender()
         }
