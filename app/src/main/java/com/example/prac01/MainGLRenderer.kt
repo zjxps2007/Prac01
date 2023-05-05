@@ -4,6 +4,7 @@ import android.opengl.GLES30
 import android.opengl.GLSurfaceView
 import android.opengl.Matrix
 import android.os.SystemClock
+import androidx.core.graphics.translationMatrix
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 import kotlin.math.cos
@@ -49,7 +50,11 @@ class MainGLRenderer: GLSurfaceView.Renderer {
             1 -> mTriangle = MyTriangle()
             2 -> mSquare = MySquare()
             3, 5 -> mCube = MyColorCube()
-            4, 6 -> mHexagonal = MyHexapyramid()
+            4 -> mHexagonal = MyHexapyramid()
+            6 -> {
+                mCube = MyColorCube()
+                mHexagonal = MyHexapyramid()
+            }
             7 -> {
                 mCube = MyColorCube()
                 myGround = MyGround()
@@ -64,7 +69,7 @@ class MainGLRenderer: GLSurfaceView.Renderer {
 
         when (drawMode) {
             3, 4, 7 -> {
-                val ratio = width.toFloat() / height.toFloat();
+                val ratio: Float = width.toFloat() / height.toFloat();
                 Matrix.perspectiveM(projectionMatrix, 0, 90f, ratio, 0.001f, 1000f)
             }
             /*
@@ -187,16 +192,23 @@ class MainGLRenderer: GLSurfaceView.Renderer {
                 Matrix.setIdentityM(modelMatrix, 0)
 
                 val endTime = SystemClock.uptimeMillis()
-                val angle = 0.01f * (endTime - startTime). toInt()
+                val angle = 0.05f * (endTime - startTime).toInt()
                 startTime = endTime
                 rotAngles[rotateAxis] += angle
 
                 Matrix.setRotateM(modelMatrix, 0, rotAngles[0], 1f, 0f, 0f)
                 val tempMatrix = floatArrayOf(1f, 0f, 0f, 0f, 0f, 1f, 0f, 0f, 0f, 0f, 1f, 0f, 0f, 0f, 0f, 1f)
-                Matrix.setRotateM(modelMatrix, 0, rotAngles[1], 0f, 1f, 0f)
+                Matrix.setRotateM(tempMatrix, 0, rotAngles[1], 0f, 1f, 0f)
                 Matrix.multiplyMM(modelMatrix, 0, tempMatrix, 0, modelMatrix, 0)
-                Matrix.setRotateM(modelMatrix, 0, rotAngles[2], 0f, 0f, 1f)
+                Matrix.setRotateM(tempMatrix, 0, rotAngles[2], 0f, 0f, 1f)
                 Matrix.multiplyMM(modelMatrix, 0, tempMatrix, 0, modelMatrix, 0)
+
+                Matrix.scaleM(tempMatrix, 0, 0.5f, 0.5f, 0.5f)
+                Matrix.multiplyMM(modelMatrix, 0, modelMatrix, 0, tempMatrix, 0)
+
+//                Matrix.setIdentityM(tempMatrix, 0)
+//                Matrix.translateM(tempMatrix, 0, 0f, -0.5f, 0f)
+//                Matrix.multiplyMM(modelMatrix, 0, tempMatrix, 0, modelMatrix, 0)
             }
         }
 
@@ -208,7 +220,46 @@ class MainGLRenderer: GLSurfaceView.Renderer {
             3 -> mCube.draw(vpMatrix)
             4 -> mHexagonal.draw(vpMatrix)
             5 -> mCube.draw(mvpMatrix)
-            6 -> mHexagonal.draw(mvpMatrix)
+            6 -> {
+                val rotMatrix = modelMatrix.copyOf(16)
+                val tempMatrix = floatArrayOf(1f, 0f, 0f, 0f, 0f, 1f, 0f, 0f, 0f, 0f, 1f, 0f, 0f, 0f, 0f, 1f)
+
+                Matrix.transposeM(modelMatrix, 0, rotMatrix, 0)
+                Matrix.setIdentityM(tempMatrix, 0)
+                Matrix.translateM(tempMatrix, 0, -0.5f, -0.5f, 0f)
+                Matrix.multiplyMM(modelMatrix, 0, tempMatrix, 0, modelMatrix, 0)
+
+                Matrix.multiplyMM(mvpMatrix, 0, vpMatrix, 0, modelMatrix, 0)
+
+                mCube.draw(mvpMatrix)
+
+                Matrix.transposeM(modelMatrix, 0, rotMatrix, 0)
+                Matrix.setIdentityM(tempMatrix, 0)
+                Matrix.translateM(tempMatrix, 0, 0.5f, -0.5f, 0f)
+                Matrix.multiplyMM(modelMatrix, 0, tempMatrix, 0, rotMatrix, 0)
+
+                Matrix.multiplyMM(mvpMatrix, 0, vpMatrix, 0, modelMatrix, 0)
+                mCube.draw(mvpMatrix)
+
+                Matrix.transposeM(modelMatrix, 0, rotMatrix, 0)
+                Matrix.setIdentityM(tempMatrix, 0)
+                Matrix.translateM(tempMatrix, 0, -0.5f, 0.5f, 0f)
+                Matrix.multiplyMM(modelMatrix, 0, tempMatrix, 0, rotMatrix, 0)
+
+                Matrix.multiplyMM(mvpMatrix, 0, vpMatrix, 0, modelMatrix, 0)
+
+                mHexagonal.draw(mvpMatrix)
+
+                Matrix.transposeM(modelMatrix, 0, rotMatrix, 0)
+                Matrix.setIdentityM(tempMatrix, 0)
+                Matrix.translateM(tempMatrix, 0, 0.5f, 0.5f, 0f)
+                Matrix.multiplyMM(modelMatrix, 0, tempMatrix, 0, modelMatrix, 0)
+
+                Matrix.multiplyMM(mvpMatrix, 0, vpMatrix, 0, modelMatrix, 0)
+
+                mHexagonal.draw(mvpMatrix)
+
+            }
 
             7 -> {
                 if (viewMode == 0) {
