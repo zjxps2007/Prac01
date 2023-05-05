@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.example.prac01.databinding.ActivityMainBinding
 
-
 var drawMode: Int = -1
 
 class MainActivity : AppCompatActivity() {

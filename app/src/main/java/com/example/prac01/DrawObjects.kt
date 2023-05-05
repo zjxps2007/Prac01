@@ -30,17 +30,20 @@ class DrawObjects : AppCompatActivity() {
             rotateAxis = 2
         }
 
+        // 시작 정지만 넣으면 됨
         binding.toggleBtn.setOnClickListener {
+            isRotating = !isRotating
             if (isRotating) {
                 binding.toggleBtn.text = "Stop"
             }
             else {
                 binding.toggleBtn.text = "Start"
+                binding.surfaceView.requestRender()
             }
         }
     }
 
-    fun initGLSurfaceView() {
+    private fun initGLSurfaceView() {
         binding.surfaceView.setEGLContextClientVersion(3)
         binding.surfaceView.setRenderer(MainGLRenderer())
         binding.surfaceView.renderMode = GLSurfaceView.RENDERMODE_CONTINUOUSLY
