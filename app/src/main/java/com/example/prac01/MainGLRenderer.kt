@@ -262,10 +262,7 @@ class MainGLRenderer: GLSurfaceView.Renderer {
             }
 
             7 -> {
-                if (viewMode == 0) {
-                    Matrix.perspectiveM(projectionMatrix, 0, 90f, aspectRatio, 0.001f, 1000f)
-                }
-                else {
+                if (viewOrtho) {
                     if (aspectRatio >= 1.0f) {
                         Matrix.orthoM(projectionMatrix, 0, -aspectRatio, aspectRatio, -1f, 1f, 0f, 1000f)
                     }
@@ -274,6 +271,15 @@ class MainGLRenderer: GLSurfaceView.Renderer {
                         Matrix.orthoM(projectionMatrix, 0, -1f, 1f, -ratio, ratio, 0f, 1000f)
                     }
                 }
+                else {
+                    Matrix.perspectiveM(projectionMatrix, 0, 90f, aspectRatio, 0.001f, 1000f)
+                }
+
+                eyeAt[0] = eyePos[0] + cameraVec[0]
+                eyeAt[1] = eyePos[1] + cameraVec[1]
+                eyeAt[2] = eyePos[2] + cameraVec[2]
+
+                Matrix.setLookAtM(viewMatrix, 0, eyePos[0], eyePos[1], eyePos[2], eyeAt[0], eyeAt[1], eyeAt[2], 0f, 1f, 0f)
 
                 Matrix.multiplyMM(vpMatrix, 0, projectionMatrix, 0, viewMatrix, 0)
 
