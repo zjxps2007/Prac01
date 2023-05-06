@@ -16,9 +16,30 @@
         android:theme="@style/Theme.Prac01"
         tools:targetApi="31">
         <activity
+            android:name=".ViewObjects"
+            android:exported="false" />
+        <activity
+            android:name=".DrawObjects"
+            android:exported="false" />
+        <activity
+            android:name=".RotateCube"
+            android:exported="false" />
+        <activity
+            android:name=".DrawHexapyramid"
+            android:exported="false"
+            android:label="Draw a Hexgonal Pyramid" />
+        <activity
+            android:name=".DrawColorCube"
+            android:exported="false"
+            android:label="Draw a ColorCube" />
+        <activity
+            android:name=".DrawSquare"
+            android:exported="false"
+            android:label="DrawSquare" />
+        <activity
             android:name=".DrawTriangle"
             android:exported="false"
-            android:label="Draw a Triangle"/>
+            android:label="Draw a Triangle" />
         <activity
             android:name=".DrawSurface"
             android:exported="false"
