@@ -5,12 +5,15 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.example.prac01.databinding.ActivityDrawObjectsBinding
 
+
+var isRotating = false
+
 class DrawObjects : AppCompatActivity() {
     private val binding: ActivityDrawObjectsBinding by lazy {
         ActivityDrawObjectsBinding.inflate(layoutInflater)
     }
 
-    private var isRotating = false
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

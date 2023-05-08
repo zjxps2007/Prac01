@@ -4,7 +4,6 @@ import android.opengl.GLES30
 import android.opengl.GLSurfaceView
 import android.opengl.Matrix
 import android.os.SystemClock
-import androidx.core.graphics.translationMatrix
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 import kotlin.math.cos
@@ -194,7 +193,10 @@ class MainGLRenderer: GLSurfaceView.Renderer {
                 val endTime = SystemClock.uptimeMillis()
                 val angle = 0.05f * (endTime - startTime).toInt()
                 startTime = endTime
-                rotAngles[rotateAxis] += angle
+
+                if (isRotating) {
+                    rotAngles[rotateAxis] += angle
+                }
 
                 Matrix.setRotateM(modelMatrix, 0, rotAngles[0], 1f, 0f, 0f)
                 val tempMatrix = floatArrayOf(1f, 0f, 0f, 0f, 0f, 1f, 0f, 0f, 0f, 0f, 1f, 0f, 0f, 0f, 0f, 1f)
@@ -258,7 +260,6 @@ class MainGLRenderer: GLSurfaceView.Renderer {
                 Matrix.multiplyMM(mvpMatrix, 0, vpMatrix, 0, modelMatrix, 0)
 
                 mHexagonal.draw(mvpMatrix)
-
             }
 
             7 -> {
