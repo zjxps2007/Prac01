@@ -10,7 +10,7 @@ class MainGLSurfaceView(context: Context): GLSurfaceView(context) {
     init {
         setEGLContextClientVersion(3)
 
-        mainRenderer = MainGLRenderer()
+        mainRenderer = MainGLRenderer(context)
 
         setRenderer(mainRenderer)
 

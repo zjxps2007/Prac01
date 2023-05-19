@@ -76,7 +76,7 @@ class ViewObjects : AppCompatActivity() {
     fun initSurfaceView() {
         binding.surfaceView.setEGLContextClientVersion(3)
 
-        binding.surfaceView.setRenderer(MainGLRenderer())
+        binding.surfaceView.setRenderer(MainGLRenderer(this))
 
         binding.surfaceView.renderMode = GLSurfaceView.RENDERMODE_WHEN_DIRTY
     }
