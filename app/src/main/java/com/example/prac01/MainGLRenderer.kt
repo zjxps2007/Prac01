@@ -122,7 +122,7 @@ class MainGLRenderer(val context: Context): GLSurfaceView.Renderer {
         }
 
         when (drawMode) {
-            3, 5, 8 -> {
+            3, 5 -> {
                 Matrix.setLookAtM(viewMatrix, 0, 1f, 1f, 1f, 0f, 0f, 0f, 0f, 1f, 0f)
             }
             4, 7 -> {
@@ -134,7 +134,7 @@ class MainGLRenderer(val context: Context): GLSurfaceView.Renderer {
             }
 
             8 -> {
-                Matrix.setLookAtM(viewMatrix, 0, 0f, 3f, 3f, 0f, 0f, 0f, 0f, 1f, 0f)
+                Matrix.setLookAtM(viewMatrix, 0, 0f, 1f, 2f, 0f, 0f, 0f, 0f, 1f, 0f)
             }
         }
 
