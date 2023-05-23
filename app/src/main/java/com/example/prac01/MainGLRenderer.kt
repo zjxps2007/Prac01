@@ -1,5 +1,6 @@
 package com.example.prac01
 
+import android.content.Context
 import android.opengl.GLES30
 import android.opengl.GLSurfaceView
 import android.opengl.Matrix
@@ -9,13 +10,16 @@ import javax.microedition.khronos.opengles.GL10
 import kotlin.math.cos
 import kotlin.math.sin
 
-class MainGLRenderer: GLSurfaceView.Renderer {
+class MainGLRenderer(val context: Context): GLSurfaceView.Renderer {
 
     private lateinit var mTriangle: MyTriangle
     private lateinit var mSquare: MySquare
     private lateinit var mCube: MyColorCube
     private lateinit var mHexagonal: MyHexapyramid
     private lateinit var myGround: MyGround
+    private lateinit var mTexGround: MyTexGround
+    private lateinit var mTexPillar: MyTexPillar
+    private lateinit var mTexCube: MyTexCube
 
     private var mvpMatrix = FloatArray(16)
     private var viewMatrix = FloatArray(16)
@@ -58,6 +62,11 @@ class MainGLRenderer: GLSurfaceView.Renderer {
                 mCube = MyColorCube()
                 myGround = MyGround()
             }
+            8 -> {
+                mTexCube = MyTexCube(context)
+                mTexPillar = MyTexPillar(context)
+                mTexGround = MyTexGround(context)
+            }
         }
     }
 
@@ -67,38 +76,10 @@ class MainGLRenderer: GLSurfaceView.Renderer {
         aspectRatio = width.toFloat() / height.toFloat()
 
         when (drawMode) {
-            3, 4, 7 -> {
+            3, 4, 7, 8 -> {
                 val ratio: Float = width.toFloat() / height.toFloat();
                 Matrix.perspectiveM(projectionMatrix, 0, 90f, ratio, 0.001f, 1000f)
             }
-            /*
-            3 -> {
-//                if (width > height) {
-//                    val ratio = width.toFloat() / height.toFloat()
-//                    Matrix.orthoM(projectionMatrix, 0, -ratio, ratio, -1f, 1f, 0f, 1000f)
-//                }
-//                else {
-//                    val ratio = height.toFloat() / width.toFloat()
-//                    Matrix.orthoM(projectionMatrix, 0, -1f, 1f, -ratio, ratio, 0f, 1000f)
-//                }
-
-                val ratio: Float = width.toFloat() / height.toFloat()
-                Matrix.perspectiveM(projectionMatrix, 0, 90f, ratio, 0.0001f, 1000f)
-                Matrix.setLookAtM(viewMatrix, 0, 1f, 1f, 1f, 0f, 0f, 0f,0f,1.0f, 0f)
-//                Matrix.multiplyMM(mvpMatrix, 0, projectionMatrix, 0, viewMatrix, 0)
-
-                Matrix.multiplyMM(vpMatrix, 0, projectionMatrix, 0, viewMatrix, 0)
-
-            }
-
-            4 -> {
-                val ratio: Float = width.toFloat() / height.toFloat()
-                Matrix.perspectiveM(projectionMatrix, 0, 90f, ratio, 0.0001f, 1000f)
-                Matrix.setLookAtM(viewMatrix, 0, 0f, 2f, 2.5f, 0f, 0f, 0f,0f,1.0f, 0f)
-                Matrix.multiplyMM(mvpMatrix, 0, projectionMatrix, 0, viewMatrix, 0)
-            }
-
-             */
 
             5, 6 -> {
                 if (width > height) {
@@ -122,6 +103,10 @@ class MainGLRenderer: GLSurfaceView.Renderer {
 
             6 -> {
                 Matrix.setLookAtM(viewMatrix, 0, 0f, 0f, 2f, 0f, 0f, 0f, 0f, 1f, 0f)
+            }
+
+            8 -> {
+                Matrix.setLookAtM(viewMatrix, 0, 0f, 1f, 2f, 0f, 0f, 0f, 0f, 1f, 0f)
             }
         }
 
@@ -286,6 +271,30 @@ class MainGLRenderer: GLSurfaceView.Renderer {
 
                 mCube.draw(vpMatrix)
                 myGround.draw(vpMatrix)
+            }
+
+            8 -> {
+                eyeAt[0] = eyePos[0] + cameraVec[0]
+                eyeAt[1] = eyePos[1] + cameraVec[1]
+                eyeAt[2] = eyePos[2] + cameraVec[2]
+
+                Matrix.setLookAtM(viewMatrix, 0, eyePos[0], eyePos[1], eyePos[2], eyeAt[0], eyeAt[1], eyeAt[2], 0f, 1f, 0f)
+
+                Matrix.multiplyMM(vpMatrix, 0, projectionMatrix, 0, viewMatrix, 0)
+
+                for (z in -5 .. 0 step 2) {
+                    Matrix.setIdentityM(modelMatrix, 0)
+                    Matrix.translateM(modelMatrix, 0, 3f, 0f, z.toFloat())
+                    Matrix.multiplyMM(mvpMatrix, 0, vpMatrix, 0, modelMatrix, 0)
+                    mTexPillar.draw(mvpMatrix)
+
+                    Matrix.setIdentityM(modelMatrix, 0)
+                    Matrix.translateM(modelMatrix, 0, -3f, 0f, z.toFloat())
+                    Matrix.multiplyMM(mvpMatrix, 0, vpMatrix, 0, modelMatrix, 0)
+                    mTexPillar.draw(mvpMatrix)
+                }
+                mTexCube.draw(vpMatrix)
+                mTexGround.draw(vpMatrix)
             }
         }
     }

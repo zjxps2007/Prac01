@@ -33,7 +33,6 @@ class DrawObjects : AppCompatActivity() {
             rotateAxis = 2
         }
 
-        // 시작 정지만 넣으면 됨
         binding.toggleBtn.setOnClickListener {
             isRotating = !isRotating
             if (isRotating) {
@@ -48,7 +47,7 @@ class DrawObjects : AppCompatActivity() {
 
     private fun initGLSurfaceView() {
         binding.surfaceView.setEGLContextClientVersion(3)
-        binding.surfaceView.setRenderer(MainGLRenderer())
+        binding.surfaceView.setRenderer(MainGLRenderer(this))
         binding.surfaceView.renderMode = GLSurfaceView.RENDERMODE_CONTINUOUSLY
     }
 }

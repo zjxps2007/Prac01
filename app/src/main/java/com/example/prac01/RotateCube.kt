@@ -68,7 +68,7 @@ class RotateCube : AppCompatActivity() {
     fun intiGLSurfaceView() {
         binding.surfaceView.setEGLContextClientVersion(3)
 
-        binding.surfaceView.setRenderer(MainGLRenderer())
+        binding.surfaceView.setRenderer(MainGLRenderer(this))
 
 //        binding.surfaceView.renderMode = GLSurfaceView.RENDERMODE_WHEN_DIRTY
         binding.surfaceView.renderMode = GLSurfaceView.RENDERMODE_CONTINUOUSLY

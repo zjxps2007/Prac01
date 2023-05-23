@@ -1,69 +1,86 @@
 package com.example.prac01
 
+import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.opengl.GLES30
+import android.opengl.GLUtils
 import android.util.Log
+import java.io.BufferedInputStream
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.FloatBuffer
 import java.nio.ShortBuffer
 
-class MyColorCube {
+class MyTexPillar(val myContext: Context) {
     private val vertexCoords = floatArrayOf(
-        -0.5f, 0.5f, -0.5f,
-        -0.5f, -0.5f, -0.5f,
-        0.5f, -0.5f, -0.5f,
-        0.5f, 0.5f, -0.5f,
-        -0.5f, 0.5f, 0.5f,
-        -0.5f, -0.5f, 0.5f,
-        0.5f, -0.5f, 0.5f,
-        0.5f, 0.5f, 0.5f
+        0.5f, 2.0f, 0.0f,
+        0.25f, 2.0f, 0.4333f,
+        -0.25f, 2.0f, 0.4333f,
+        -0.5f, 2.0f, 0.0f,
+        -0.25f, 2.0f, -0.4333f,
+        0.25f, 2.0f, -0.4333f,
+        0.5f, 2.0f, 0.0f,
 
+        0.5f, -1.0f, 0.0f,
+        0.25f, -1.0f, 0.4333f,
+        -0.25f, -1.0f, 0.4333f,
+        -0.5f, -1.0f, 0.0f,
+        -0.25f, -1.0f, -0.4333f,
+        0.25f, -1.0f, -0.4333f,
+        0.5f, -1.0f, 0.0f,
+        0.5f, -1.0f, 0.0f
     )
 
-    private val vertexColors = floatArrayOf(
-        0.0f, 1.0f, 0.0f,
-        0.0f, 0.0f, 0.0f,
-        1.0f, 0.0f, 0.0f,
-        1.0f, 1.0f, 0.0f,
-        0.0f, 1.0f, 0.0f,
-        0.0f, 0.0f, 1.0f,
-        1.0f, 0.0f, 1.0f,
-        1.0f, 1.0f, 1.0f
+    private val pillerIndex = shortArrayOf(
+        0, 1, 8, 0, 8, 7,
+        1, 2, 9, 1, 9, 8,
+        2, 3, 10, 2, 10, 9,
+        3, 4, 11, 3, 11, 10,
+        4, 5, 12, 4, 12, 11,
+        5, 6, 13, 5, 13, 12
     )
 
-    private val drawOrder = shortArrayOf(
-        0, 3, 2, 0, 2, 1,
-        2, 3, 7, 2, 7, 6,
-        1, 2, 6, 1, 6, 5,
-        4, 0, 1, 4, 1, 5,
-        3, 0, 4, 3, 4, 7,
-        5, 6, 7, 5, 7, 4
+    private var vertexUVs = floatArrayOf(
+        0.0f, 0.0f,
+        0.1667f, 0.0f,
+        0.3334f, 0.0f,
+        0.5f, 0.0f,
+        0.6667f, 0.0f,
+        0.8334f, 0.0f,
+
+        0.0f, 1.0f,
+        0.1667f, 1.0f,
+        0.3334f, 1.0f,
+        0.5f, 1.0f,
+        0.6667f, 1.0f,
+        0.8334f, 1.0f,
+        1.0f, 1.0f
     )
 
     private var vertexBuffer: FloatBuffer =
         ByteBuffer.allocateDirect(vertexCoords.size * 4).run {
             order(ByteOrder.nativeOrder())
-
             asFloatBuffer().apply {
                 put(vertexCoords)
                 position(0)
             }
         }
 
-    private var colorBuffer: FloatBuffer =
-        ByteBuffer.allocateDirect(vertexColors.size * 4).run {
+    private var uvBuffer: FloatBuffer =
+        ByteBuffer.allocateDirect(vertexUVs.size * 4).run {
             order(ByteOrder.nativeOrder())
             asFloatBuffer().apply {
-                put(vertexColors)
+                put(vertexUVs)
                 position(0)
             }
         }
 
     private val indexBuffer: ShortBuffer =
-        ByteBuffer.allocateDirect(drawOrder.size * 2).run {
+        ByteBuffer.allocateDirect(pillerIndex.size * 2).run {
             order(ByteOrder.nativeOrder())
             asShortBuffer().apply {
-                put(drawOrder)
+                put(pillerIndex)
                 position(0)
             }
         }
@@ -71,26 +88,27 @@ class MyColorCube {
     private val vertexShaderCode =
         "#version 300 es\n" +
                 "uniform mat4 uMVPMatrix;\n" +
-                "layout(location = 3) in vec4 vPosition;\n" +
-                "layout(location = 4) in vec4 vColor;\n" +
-                "out vec4 fColor;\n" +
+                "layout(location = 12) in vec4 vPosition;\n" +
+                "layout(location = 13) in vec2 vTexCoord;\n" +
+                "out vec2 fTexCoord; \n" +
                 "void main(){\n" +
                 "gl_Position = uMVPMatrix * vPosition;\n" +
-                "fColor = vColor;\n" +
+                "fTexCoord = vTexCoord; \n" +
                 "}\n"
 
     private val fragmentShaderCode =
         "#version 300 es\n" +
                 "precision mediump float;\n" +
-                "in vec4 fColor;\n" +
+                "uniform sampler2D sTexture;\n" +
+                "in vec2 fTexCoord;\n" +
                 "out vec4 fragColor;\n" +
                 "void main(){\n" +
-                "fragColor = fColor;\n" +
+                "fragColor = texture(sTexture, fTexCoord);\n" +
                 "}\n"
 
     private var mProgram: Int = -1
-
     private var mvpMatrixHandle: Int = -1
+    private var textureID = IntArray(1)
 
     private val vertexStride: Int = COORDS_PER_VERTEX * 4
 
@@ -108,9 +126,11 @@ class MyColorCube {
 
         GLES30.glUseProgram(mProgram)
 
-        GLES30.glEnableVertexAttribArray(3)
+
+        GLES30.glEnableVertexAttribArray(12)
+
         GLES30.glVertexAttribPointer(
-            3,
+            12,
             COORDS_PER_VERTEX,
             GLES30.GL_FLOAT,
             false,
@@ -118,17 +138,35 @@ class MyColorCube {
             vertexBuffer
         )
 
-        GLES30.glEnableVertexAttribArray(4)
+        GLES30.glEnableVertexAttribArray(13)
         GLES30.glVertexAttribPointer(
-            4,
-            COORDS_PER_VERTEX,
+            13,
+            2,
             GLES30.GL_FLOAT,
             false,
-            vertexStride,
-            colorBuffer
+            0,
+            uvBuffer
         )
 
         mvpMatrixHandle = GLES30.glGetUniformLocation(mProgram, "uMVPMatrix")
+
+        GLES30.glGenTextures(1, textureID, 0)
+
+        GLES30.glActiveTexture(GLES30.GL_TEXTURE0)
+        GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, textureID[0])
+        GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MIN_FILTER, GLES30.GL_LINEAR_MIPMAP_NEAREST)
+        GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MAG_FILTER, GLES30.GL_LINEAR)
+//        GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_WRAP_S, GLES30.GL_MIRRORED_REPEAT)
+//        GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_WRAP_T, GLES30.GL_MIRRORED_REPEAT)
+        GLUtils.texImage2D(GLES30.GL_TEXTURE_2D, 0, loadBitmap("brick.bmp"), 0)
+        GLES30.glGenerateMipmap(GLES30.GL_TEXTURE_2D)
+    }
+
+    private fun loadBitmap(filename: String): Bitmap {
+        val manager = myContext.assets
+        val inputStream = BufferedInputStream(manager.open(filename))
+        val bitmap: Bitmap? = BitmapFactory.decodeStream(inputStream)
+        return bitmap!!
     }
 
     private fun loadShader(type: Int, shaderCode: String): Int {
@@ -154,7 +192,8 @@ class MyColorCube {
         GLES30.glUseProgram(mProgram)
 
         GLES30.glUniformMatrix4fv(mvpMatrixHandle, 1, false, mvpMatrix, 0)
+        GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, textureID[0])
 
-        GLES30.glDrawElements(GLES30.GL_TRIANGLES, drawOrder.size, GLES30.GL_UNSIGNED_SHORT, indexBuffer)
+        GLES30.glDrawElements(GLES30.GL_TRIANGLES, pillerIndex.size, GLES30.GL_UNSIGNED_SHORT, indexBuffer)
     }
 }
