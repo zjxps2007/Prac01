@@ -80,34 +80,6 @@ class MainGLRenderer(val context: Context): GLSurfaceView.Renderer {
                 val ratio: Float = width.toFloat() / height.toFloat();
                 Matrix.perspectiveM(projectionMatrix, 0, 90f, ratio, 0.001f, 1000f)
             }
-            /*
-            3 -> {
-//                if (width > height) {
-//                    val ratio = width.toFloat() / height.toFloat()
-//                    Matrix.orthoM(projectionMatrix, 0, -ratio, ratio, -1f, 1f, 0f, 1000f)
-//                }
-//                else {
-//                    val ratio = height.toFloat() / width.toFloat()
-//                    Matrix.orthoM(projectionMatrix, 0, -1f, 1f, -ratio, ratio, 0f, 1000f)
-//                }
-
-                val ratio: Float = width.toFloat() / height.toFloat()
-                Matrix.perspectiveM(projectionMatrix, 0, 90f, ratio, 0.0001f, 1000f)
-                Matrix.setLookAtM(viewMatrix, 0, 1f, 1f, 1f, 0f, 0f, 0f,0f,1.0f, 0f)
-//                Matrix.multiplyMM(mvpMatrix, 0, projectionMatrix, 0, viewMatrix, 0)
-
-                Matrix.multiplyMM(vpMatrix, 0, projectionMatrix, 0, viewMatrix, 0)
-
-            }
-
-            4 -> {
-                val ratio: Float = width.toFloat() / height.toFloat()
-                Matrix.perspectiveM(projectionMatrix, 0, 90f, ratio, 0.0001f, 1000f)
-                Matrix.setLookAtM(viewMatrix, 0, 0f, 2f, 2.5f, 0f, 0f, 0f,0f,1.0f, 0f)
-                Matrix.multiplyMM(mvpMatrix, 0, projectionMatrix, 0, viewMatrix, 0)
-            }
-
-             */
 
             5, 6 -> {
                 if (width > height) {
@@ -302,6 +274,14 @@ class MainGLRenderer(val context: Context): GLSurfaceView.Renderer {
             }
 
             8 -> {
+                eyeAt[0] = eyePos[0] + cameraVec[0]
+                eyeAt[1] = eyePos[1] + cameraVec[1]
+                eyeAt[2] = eyePos[2] + cameraVec[2]
+
+                Matrix.setLookAtM(viewMatrix, 0, eyePos[0], eyePos[1], eyePos[2], eyeAt[0], eyeAt[1], eyeAt[2], 0f, 1f, 0f)
+
+                Matrix.multiplyMM(vpMatrix, 0, projectionMatrix, 0, viewMatrix, 0)
+
                 for (z in -5 .. 0 step 2) {
                     Matrix.setIdentityM(modelMatrix, 0)
                     Matrix.translateM(modelMatrix, 0, 3f, 0f, z.toFloat())

@@ -38,7 +38,6 @@ class MyColorCube {
         4, 0, 1, 4, 1, 5,
         3, 0, 4, 3, 4, 7,
         5, 6, 7, 5, 7, 4
-
     )
 
     private var vertexBuffer: FloatBuffer =
